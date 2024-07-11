@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "11434:11434"
+    volumes:
+      - ${OLLAMA_MODELS_PATH}:/root/.ollama/models
+    environment:
+      - OLLAMA_MODELS=/root/.ollama/models
+    expose:
+      - 11434
+    restart: always
+  
+  frontend:
+    container_name: frontend
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: uvicorn app_frontend:app --host 0.0.0.0 --port 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
+      - ollama
+    restart: always
+  
+  backend:
+    container_name: backend
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: uvicorn app_backend:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama
+    restart: always
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    restart: always
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    restart: always
