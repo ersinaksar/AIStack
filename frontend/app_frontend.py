@@ -1,12 +1,11 @@
 # frontend/app_frontend.py
-from fastapi import FastAPI
+import streamlit as st
+import requests
 
-app = FastAPI()
+st.title("Chatbot Interface")
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello from Frontend!"}
+user_input = st.text_input("You:", "")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+if st.button("Send"):
+    response = requests.post("http://backend:8000/api/chat", json={"message": user_input})
+    st.write("Bot:", response.json().get("reply"))

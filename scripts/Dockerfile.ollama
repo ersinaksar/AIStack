@@ -1,0 +1,11 @@
+# scripts/Dockerfile.ollama
+FROM ollama/ollama:latest
+
+COPY /scripts/run_ollama.sh /scripts/run_ollama.sh
+
+WORKDIR /scripts
+
+RUN chmod +x run_ollama.sh
+
+EXPOSE 11434
+

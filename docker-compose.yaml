@@ -2,47 +2,73 @@ version: '3.8'
 
 services:
   ollama:
+    build:
+      context: .
+      dockerfile: ./scripts/Dockerfile.ollama
     container_name: ollama
-    image: ollama/ollama:latest
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # image: ollama/ollama:latest
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     ports:
       - "11434:11434"
     volumes:
       - ${OLLAMA_MODELS_PATH}:/root/.ollama/models
     environment:
       - OLLAMA_MODELS=/root/.ollama/models
-    expose:
-      - 11434
+    # expose:
+    #   - 11434
+    entrypoint: /scripts/run_ollama.sh
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
   
   frontend:
+    build:
+      context: ./frontend
     container_name: frontend
-    image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
+    # image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
     volumes:
       - ./frontend:/app
-    working_dir: /app
-    command: uvicorn app_frontend:app --host 0.0.0.0 --port 5000
+    # working_dir: /app
+    # command: uvicorn app_frontend:app --host 0.0.0.0 --port 5000
     ports:
-      - "5000:5000"
+      # - "5000:5000"
+      - "8501:8501"  
     depends_on:
       - backend
       - ollama
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
   
   backend:
+    build:
+      context: ./backend
     container_name: backend
-    image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
+    # image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
     volumes:
       - ./backend:/app
-    working_dir: /app
-    command: uvicorn app_backend:app --host 0.0.0.0 --port 8000
+    # working_dir: /app
+    # command: uvicorn app_backend:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     depends_on:
       - ollama
     restart: always
-
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
@@ -51,6 +77,11 @@ services:
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   prometheus:
     container_name: prometheus
@@ -60,3 +91,8 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
