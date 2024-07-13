@@ -2,22 +2,22 @@ version: '3.8'
 
 services:
   ollama:
-    build:
-      context: .
-      dockerfile: ./scripts/Dockerfile.ollama
+    # build:
+    #   context: .
+    #   dockerfile: ./scripts/Dockerfile.ollama
     container_name: ollama
-    # image: ollama/ollama:latest
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
+    image: ollama/ollama:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "11434:11434"
     volumes:
       - ${OLLAMA_MODELS_PATH}:/root/.ollama/models
     environment:
       - OLLAMA_MODELS=/root/.ollama/models
-    # expose:
-    #   - 11434
-    entrypoint: /scripts/run_ollama.sh
+    expose:
+      - 11434
+    # entrypoint: /scripts/run_ollama.sh
     restart: always
     deploy:
       resources:
@@ -64,11 +64,12 @@ services:
     depends_on:
       - ollama
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.0'
+    #       memory: 512M
+
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
