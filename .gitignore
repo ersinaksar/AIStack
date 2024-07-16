@@ -9,6 +9,9 @@ fish
 commands.md
 .env
 
+# Ignore Sphinx build directory
+_build/
+
 # C extensions
 *.so
 
