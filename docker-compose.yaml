@@ -7,8 +7,8 @@ services:
     #   dockerfile: ./scripts/Dockerfile.ollama
     container_name: ollama
     image: ollama/ollama:latest
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     ports:
       - "11434:11434"
     volumes:
@@ -19,14 +19,14 @@ services:
       - 11434
     # entrypoint: /scripts/run_ollama.sh
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 8G
-        reservations:
-          cpus: '2.0'
-          memory: 4G
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '4.0'
+    #       memory: 8G
+    #     reservations:
+    #       cpus: '2.0'
+    #       memory: 4G
   
   frontend:
     build:
