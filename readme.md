@@ -21,3 +21,8 @@ http://localhost:3000
 •	user name: admin
 •	password: admin
 
+
+You can reach this github codes article from [medium]
+
+
+[medium]:https://ersinaksar.medium.com/end-to-end-ai-and-application-development-framework-with-docker-compose-1ce42373a034
